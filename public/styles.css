@@ -16,8 +16,10 @@ body {
 }
 
 .logo {
-    width: 100px;
-    margin-bottom: 10px;
+    display: block;
+    margin: 20px auto;
+    width: 200px; /* Adjust size */
+    height: auto;
 }
 
 input, button {
