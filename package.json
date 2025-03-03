@@ -1,18 +1,15 @@
 {
-  "name": "kindkhalidhost",
+  "name": "telegram-bot-host",
   "version": "1.0.0",
-  "description": "A Telegram bot hosting service",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
   "dependencies": {
     "express": "^4.18.2",
-    "fs": "0.0.1-security",
+    "fs-extra": "^11.1.1",
     "path": "^0.12.7",
-    "telegraf": "^4.12.2"
+    "telegraf": "^4.12.2",
+    "pm2": "^5.3.0"
   },
-  "engines": {
-    "node": ">=14"
+  "scripts": {
+    "start": "node server.js"
   }
 }
