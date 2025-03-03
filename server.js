@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Serve static files (like the front-end)
+// Serve static files
 app.use(express.static("public"));
 
 // Route to deploy bots
@@ -26,14 +26,13 @@ app.post("/deploy", (req, res) => {
         fs.mkdirSync(userDir, { recursive: true });
     }
 
-    // Write a basic bot script with the /developer command
+    // Write bot script with /developer command
     const botScript = `
         const { Telegraf } = require('telegraf');
         const bot = new Telegraf('${token}');
 
         bot.start((ctx) => ctx.reply('Hello! Your bot is running!'));
-
-        // /developer command
+        
         bot.command('developer', (ctx) => {
             ctx.reply('I am King Khalid, I am the developer.');
         });
@@ -44,7 +43,7 @@ app.post("/deploy", (req, res) => {
 
     fs.writeFileSync(path.join(userDir, "bot.js"), botScript);
 
-    // Install dependencies and start the bot
+    // Create package.json
     fs.writeFileSync(path.join(userDir, "package.json"), JSON.stringify({
         name: "telegram-bot",
         version: "1.0.0",
@@ -52,7 +51,8 @@ app.post("/deploy", (req, res) => {
         dependencies: { "telegraf": "^4.12.2" }
     }, null, 2));
 
-    exec(`cd ${userDir} && npm install && node bot.js`, (error, stdout, stderr) => {
+    // Install dependencies and run bot with PM2
+    exec(`cd ${userDir} && npm install && npx pm2 start bot.js --name bot-${token}`, (error, stdout, stderr) => {
         if (error) {
             console.error("Error starting bot:", error);
             return res.status(500).json({ message: "Bot deployment failed." });
