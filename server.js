@@ -1,9 +1,10 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
+const { exec } = require("child_process");
 
 const app = express();
-const PORT = process.env.PORT || 3000; // Auto-assign Render's port
+const PORT = process.env.PORT || 3000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -38,12 +39,27 @@ app.post("/deploy", (req, res) => {
         });
 
         bot.launch();
-        console.log("Bot started with token: ${token}");
+        console.log("Bot started successfully!");
     `;
 
     fs.writeFileSync(path.join(userDir, "bot.js"), botScript);
 
-    return res.json({ message: "Bot deployed successfully!" });
+    // Install dependencies and start the bot
+    fs.writeFileSync(path.join(userDir, "package.json"), JSON.stringify({
+        name: "telegram-bot",
+        version: "1.0.0",
+        main: "bot.js",
+        dependencies: { "telegraf": "^4.12.2" }
+    }, null, 2));
+
+    exec(`cd ${userDir} && npm install && node bot.js`, (error, stdout, stderr) => {
+        if (error) {
+            console.error("Error starting bot:", error);
+            return res.status(500).json({ message: "Bot deployment failed." });
+        }
+        console.log("Bot started:", stdout);
+        res.json({ message: "Bot deployed and running!" });
+    });
 });
 
 app.listen(PORT, () => {
