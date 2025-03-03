@@ -25,14 +25,19 @@ app.post("/deploy", (req, res) => {
         fs.mkdirSync(userDir, { recursive: true });
     }
 
-    // Write a basic bot script
+    // Write a basic bot script with the /developer command
     const botScript = `
         const { Telegraf } = require('telegraf');
         const bot = new Telegraf('${token}');
 
         bot.start((ctx) => ctx.reply('Hello! Your bot is running!'));
-        bot.launch();
 
+        // /developer command
+        bot.command('developer', (ctx) => {
+            ctx.reply('I am King Khalid, I am the developer.');
+        });
+
+        bot.launch();
         console.log("Bot started with token: ${token}");
     `;
 
