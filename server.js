@@ -41,21 +41,6 @@ app.post("/deploy", (req, res) => {
     return res.json({ message: "Bot deployed successfully!" });
 });
 
-    const botScript = `
-        const { Telegraf } = require('telegraf');
-        const bot = new Telegraf('${token}');
-
-        bot.start((ctx) => ctx.reply('Hello! Your bot is running!'));
-
-        // /developer command
-        bot.command('developer', (ctx) => {
-            ctx.reply('I am King Khalid, I am the developer.');
-        });
-
-        bot.launch();
-        console.log("Bot started with token: ${token}");
-    `;
-
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
