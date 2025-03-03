@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kind Khalid Host</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <img src="logo.png" alt="Kind Khalid Host Logo" class="logo">
+        <h1>Kind Khalid Host</h1>
+        <p>Deploy your Telegram bot by entering your token below:</p>
+        
+        <form id="deployForm">
+            <input type="text" id="botToken" placeholder="Enter your bot token" required>
+            <button type="submit">Deploy Bot</button>
+        </form>
+
+        <p id="statusMessage"></p>
+    </div>
+
+    <script>
+        document.getElementById("deployForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const botToken = document.getElementById("botToken").value;
+            const statusMessage = document.getElementById("statusMessage");
+
+            if (!botToken.trim()) {
+                statusMessage.textContent = "Please enter a valid bot token!";
+                return;
+            }
+
+            statusMessage.textContent = "Deploying your bot...";
+
+            fetch("/deploy", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token: botToken }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                statusMessage.textContent = data.message || "Bot deployed successfully!";
+            })
+            .catch(error => {
+                statusMessage.textContent = "Error deploying bot. Please try again.";
+            });
+        });
+    </script>
+</body>
+</html>
