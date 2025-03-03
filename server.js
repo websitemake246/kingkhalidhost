@@ -26,7 +26,7 @@ app.post("/deploy", (req, res) => {
         fs.mkdirSync(userDir, { recursive: true });
     }
 
-    // Write bot script with real song download
+    // Write bot script
     const botScript = `
         const { Telegraf } = require('telegraf');
         const { exec } = require('child_process');
@@ -37,33 +37,8 @@ app.post("/deploy", (req, res) => {
 
         bot.start((ctx) => ctx.reply('Hello! Your bot is running!'));
 
-        // Developer command
         bot.command('developer', (ctx) => {
             ctx.reply('I am King Khalid, I am the developer.');
-        });
-
-        // Song download command
-        bot.command('song', async (ctx) => {
-            const query = ctx.message.text.split(" ").slice(1).join(" ");
-            if (!query) return ctx.reply("Please provide a song name. Example: /song Shape of You");
-
-            ctx.reply(\`Downloading song: \${query}, please wait...\`);
-
-            const outputDir = path.join(__dirname, "downloads");
-            if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
-
-            const outputFile = path.join(outputDir, \`\${query.replace(/ /g, "_")}.mp3\`);
-
-            exec(\`yt-dlp -x --audio-format mp3 --output "\${outputFile}" ytsearch1:"\${query}"\`, (error, stdout, stderr) => {
-                if (error) {
-                    console.error("Error downloading song:", error);
-                    return ctx.reply("Failed to download the song. Try another one.");
-                }
-
-                ctx.replyWithAudio({ source: outputFile }).then(() => {
-                    fs.unlinkSync(outputFile); // Delete file after sending
-                });
-            });
         });
 
         bot.launch();
@@ -78,8 +53,10 @@ app.post("/deploy", (req, res) => {
         version: "1.0.0",
         main: "bot.js",
         dependencies: { 
-            "telegraf": "^4.12.2", 
-            "child_process": "^1.0.2" 
+            "telegraf": "^4.12.2"
+        },
+        "scripts": {
+            "start": "node bot.js"
         }
     }, null, 2));
 
